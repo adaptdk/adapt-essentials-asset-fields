@@ -1,5 +1,5 @@
 import { Icon } from '@contentful/f36-components';
-import { ButtonHTMLAttributes, DetailedHTMLProps, useState } from 'react';
+import { ButtonHTMLAttributes, DetailedHTMLProps, MouseEventHandler, useState } from 'react';
 
 type SortType = 'asc' | 'desc' | 'none';
 
@@ -10,7 +10,7 @@ export const SortButton = ({
   ...rest
 }: {
   sort?: SortType;
-  sortClickHeader?: (sort: SortType) => void;
+  sortClickHeader?: (sort: SortType) => MouseEventHandler<HTMLButtonElement>;
 } & DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>) => {
   const [sortDirection, setSortDirection] = useState<SortType>(
     sort
@@ -39,7 +39,7 @@ export const SortButton = ({
         alignItems: 'center',
         color: 'currentcolor',
       }}
-      onClick={sortClickHeader?.(sortDirection) ?? handleClick}
+      onClick={sortClickHeader ? sortClickHeader(sortDirection) : handleClick}
       {...rest}
     >
       {children}
