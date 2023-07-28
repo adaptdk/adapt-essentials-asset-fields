@@ -14,6 +14,9 @@ function renderChunks(deps: Record<string, string>) {
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
+  test: {
+    environment: 'happy-dom',
+  },
   base: '',
   build: {
     sourcemap: false,
@@ -26,4 +29,4 @@ export default defineConfig({
       },
     },
   },
-  })
+})
