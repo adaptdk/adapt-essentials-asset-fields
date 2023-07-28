@@ -1,7 +1,7 @@
 import { useEffect, useState, lazy, Suspense } from 'react';
 import { Route, BrowserRouter, Routes } from 'react-router-dom';
 
-import { Heading, Box } from '@contentful/f36-components';
+import { Heading, Box, Checkbox } from '@contentful/f36-components';
 import { Workbench } from '@contentful/f36-workbench';
 import { useCMA } from '@contentful/react-apps-toolkit';
 import { ContentTypeProps } from 'contentful-management';
@@ -15,17 +15,10 @@ function NotFound() {
   return <Heading>404</Heading>;
 }
 
-export const PageRouter = () => {
-  return (
-    <BrowserRouter>
-      <Page />
-    </BrowserRouter>
-  );
-};
-
 const Page = () => {
   const cma = useCMA();
   const [contentTypes, setContentTypes] = useState<ContentTypeProps[]>([]);
+  const [autoUpdate, setAutoUpdate] = useState<boolean>(false);
 
   useEffect(() => {
     cma.contentType
@@ -35,7 +28,15 @@ const Page = () => {
 
   return (
     <Workbench>
-      <Workbench.Header title={'Asset fields'} actions={<div>Actions</div>} />
+      <Workbench.Header title={'Asset fields'} actions={<div>
+        <Checkbox
+      name="newsletter-subscribe-controlled"
+      id="newsletter-subscribe-controlled"
+      isChecked={autoUpdate}
+      onChange={() => setAutoUpdate((prev) => !prev)}
+    >Autoupdate
+    </Checkbox>
+      </div>} />
       <Workbench.Content>
         <Box marginTop="spacingXl" className="page">
           <Routes>
@@ -44,7 +45,7 @@ const Page = () => {
                 index
                 element={
                   <Suspense fallback={null}>
-                    <Dashboard contentTypes={contentTypes} />
+                    <Dashboard contentTypes={contentTypes} settings={{autoUpdate}} />
                   </Suspense>
                 }
               />
@@ -68,9 +69,19 @@ const Page = () => {
           </Routes>
         </Box>
       </Workbench.Content>
-      <Workbench.Sidebar>
+      {/* <Workbench.Sidebar>
         <div>Hello</div>
-      </Workbench.Sidebar>
+      </Workbench.Sidebar> */}
     </Workbench>
   );
 };
+
+const PageRouter = () => {
+  return (
+    <BrowserRouter>
+      <Page />
+    </BrowserRouter>
+  );
+};
+
+export default PageRouter;

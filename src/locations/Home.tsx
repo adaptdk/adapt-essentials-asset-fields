@@ -1,7 +1,7 @@
 import { Paragraph } from '@contentful/f36-components';
 import { HomeAppSDK } from '@contentful/app-sdk';
 import { /* useCMA, */ useSDK } from '@contentful/react-apps-toolkit';
-import { PageRouter } from './Page';
+import PageRouter from './Page';
 
 const Home = () => {
   const sdk = useSDK<HomeAppSDK>();
