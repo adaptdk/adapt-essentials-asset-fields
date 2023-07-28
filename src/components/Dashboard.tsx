@@ -1,26 +1,10 @@
 import { useEffect, useReducer, useState, useMemo } from 'react';
-import React from 'react';
-import { css } from 'emotion';
-import { DndContext } from '@dnd-kit/core';
-import {
-  arrayMove,
-  verticalListSortingStrategy,
-  SortableContext,
-  useSortable,
-} from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
 import { ContentEntitySys, ContentType, PageAppSDK } from '@contentful/app-sdk';
 import {
-  DragHandle,
-  Heading,
-  Paragraph,
-  Grid,
   Box,
   Table,
-  MissingContent,
   EntityStatusBadge,
   Checkbox,
-  Button,
   TextInput,
   Textarea,
   Pagination,
@@ -29,8 +13,6 @@ import {
   Popover,
   Stack,
   Switch,
-  Card,
-  Icon,
 } from '@contentful/f36-components';
 import FocusLock from 'react-focus-lock';
 import {
@@ -42,6 +24,7 @@ import { Image } from '@contentful/f36-image';
 
 import { useCMA, useSDK } from '@contentful/react-apps-toolkit';
 import { SortButton } from './SortButton';
+import { AssetFieldText } from './AssetFieldText';
 
 interface DashboardProps {
   contentTypes: ContentType[];
@@ -111,7 +94,8 @@ export default function Dashboard({
         query: {
           skip,
           limit,
-          order: '-sys.updatedAt',
+          // order: '-sys.updatedAt',
+          order: '-sys.id',
         },
       });
       setTotal(recentAssets.total);
@@ -182,6 +166,7 @@ export default function Dashboard({
                       >
                         {sortedColumns.map(([key, { enabled, title }]) => (
                             <IconButton
+                            key={key}
                             isFullWidth
                               style={{
                                 display: 'flex',
@@ -217,25 +202,6 @@ export default function Dashboard({
             </Table.Row>
           </Table.Head>
           <Table.Body>
-            {/* <Table.Row>
-            <Table.Cell style={{verticalAlign: "bottom"}}>
-                <Checkbox></Checkbox>
-              </Table.Cell>
-              <Table.Cell>
-                <MissingContent label="No title available" />
-              </Table.Cell>
-              <Table.Cell>
-                <MissingContent label="No description available" />
-              </Table.Cell>
-              <Table.Cell>
-                <MissingContent label="No filename available" />
-              </Table.Cell>
-              <Table.Cell>August 29, 2018</Table.Cell>
-              <Table.Cell>John Doe</Table.Cell>
-              <Table.Cell>
-                <EntityStatusBadge entityStatus="published" />
-              </Table.Cell>
-            </Table.Row> */}
             {recentAssets.map((asset) => (
               <Table.Row key={asset.sys.id}>
                 {/* <pre>{JSON.stringify(asset, null, 2)}</pre> */}
@@ -260,31 +226,26 @@ export default function Dashboard({
                                 }
                               />
                             </Box>
-                            <TextInput
-                              value={asset.fields.title?.[sdk.locales.default]}
-                            />
+                            <AssetFieldText asset={asset} locale={sdk.locales.default} field={'title'} />
                           </Flex>
                         </Table.Cell>
                       );
                     case 'description':
                       return (
                         <Table.Cell key={key}>
-                          <Textarea
+                          {/* <Textarea
                             value={
                               asset.fields.description?.[sdk.locales.default]
                             }
                             rows={1}
-                          />
+                          /> */}
+                          <AssetFieldText asset={asset} locale={sdk.locales.default} field={'description'} />
                         </Table.Cell>
                       );
                     case 'filename':
                       return (
                         <Table.Cell key={key}>
-                          <TextInput
-                            value={
-                              asset.fields.file?.[sdk.locales.default].fileName
-                            }
-                          />
+                          <AssetFieldText asset={asset} locale={sdk.locales.default} field={'fileName'} />
                         </Table.Cell>
                       );
 
