@@ -1,14 +1,11 @@
-import { useEffect, useState, lazy, Suspense } from 'react';
+import { useEffect, lazy, Suspense } from 'react';
 import { Route, BrowserRouter, Routes } from 'react-router-dom';
-
-import { Heading, Box, Checkbox } from '@contentful/f36-components';
+import { Heading, Box, Checkbox, Flex } from '@contentful/f36-components';
 import { Workbench } from '@contentful/f36-workbench';
-import { useCMA } from '@contentful/react-apps-toolkit';
-import { ContentTypeProps } from 'contentful-management';
 
 import { PageLayout } from '../components/PageLayout';
+import { Provider, useStore } from '../components/context/createFastContext';
 
-const IncompleteEntries = lazy(() => import('../components/IncompleteEntries'));
 const Dashboard = lazy(() => import('../components/Dashboard'));
 
 function NotFound() {
@@ -16,27 +13,16 @@ function NotFound() {
 }
 
 const Page = () => {
-  const cma = useCMA();
-  const [contentTypes, setContentTypes] = useState<ContentTypeProps[]>([]);
-  const [autoUpdate, setAutoUpdate] = useState<boolean>(false);
-
-  useEffect(() => {
-    cma.contentType
-      .getMany({})
-      .then((result) => result?.items && setContentTypes(result.items));
-  }, []);
-
   return (
     <Workbench>
-      <Workbench.Header title={'Asset fields'} actions={<div>
-        <Checkbox
-      name="newsletter-subscribe-controlled"
-      id="newsletter-subscribe-controlled"
-      isChecked={autoUpdate}
-      onChange={() => setAutoUpdate((prev) => !prev)}
-    >Autoupdate
-    </Checkbox>
-      </div>} />
+      <Workbench.Header
+        title={'Asset fields'}
+        actions={
+          <Flex gap="2rem" alignItems="center">
+ 
+          </Flex>
+        }
+      />
       <Workbench.Content>
         <Box marginTop="spacingXl" className="page">
           <Routes>
@@ -45,18 +31,18 @@ const Page = () => {
                 index
                 element={
                   <Suspense fallback={null}>
-                    <Dashboard contentTypes={contentTypes} settings={{autoUpdate}} />
+                    <Dashboard />
                   </Suspense>
                 }
               />
-              <Route
+              {/* <Route
                 path="incomplete"
                 element={
                   <Suspense fallback={null}>
                     <IncompleteEntries contentTypes={contentTypes} />
                   </Suspense>
                 }
-              />
+              /> */}
               <Route
                 path="*"
                 element={
@@ -78,9 +64,11 @@ const Page = () => {
 
 const PageRouter = () => {
   return (
-    <BrowserRouter>
-      <Page />
-    </BrowserRouter>
+    <Provider>
+      <BrowserRouter>
+        <Page />
+      </BrowserRouter>
+    </Provider>
   );
 };
 
