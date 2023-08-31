@@ -1,8 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import { PageAppSDK } from '@contentful/app-sdk';
-import { useSDK } from '@contentful/react-apps-toolkit';
-
-import { useStore } from '../context/createFastContext';
+import { useLocalStorage } from 'use-local-storage-extended';
 
 const defaultColumns = [
   { name: 'title', label: 'Title', isVisible: true },
@@ -17,19 +14,13 @@ type UseColumnsProps = typeof defaultColumns;
 export type AvailableColumns = UseColumnsProps[number]['name'];
 
 const useColumns = (columnDescriptor = defaultColumns) => {
-  const sdk = useSDK<PageAppSDK>();
-  const [_visibleColumns, setVisibleColumns] = useStore(
-    (store) => store['visibleColumns']
-  );
-  const visibleColumns = useMemo(() => {
-    const visibleColumnsParam =
-      _visibleColumns ??
-      sdk.parameters?.instance?.visibleColumns ??
-      columnDescriptor
-        .filter(({ isVisible }) => isVisible)
-        .map(({ name }) => name);
-    return visibleColumnsParam;
-  }, [_visibleColumns, columnDescriptor, sdk.parameters?.instance?.visibleColumns]);
+  const getDefaultVisibleColumns = (description) =>
+    description.filter(({ isVisible }) => isVisible).map(({ name }) => name);
+
+  const [visibleColumns, update] = useLocalStorage({
+    key: 'visibleColumns',
+    defaultValue: getDefaultVisibleColumns(columnDescriptor),
+  });
 
   const columns = useMemo(
     () => columnDescriptor.map(({ name }) => name),
@@ -53,12 +44,14 @@ const useColumns = (columnDescriptor = defaultColumns) => {
   const changeColumnVisibility = useCallback(
     (columnName: string, isVisible: boolean) => {
       const newVisibleColumns = isVisible
-        // Preserve column order
-        ? columns.filter(column => visibleColumns.includes(column) || column === columnName)
+        ? // Preserve column order
+          columns.filter(
+            (column) => visibleColumns.includes(column) || column === columnName
+          )
         : visibleColumns.filter((name) => name !== columnName);
-      setVisibleColumns({ visibleColumns: newVisibleColumns });
+      update(newVisibleColumns);
     },
-    [columnDetails, columns, setVisibleColumns]
+    [columns, update, visibleColumns]
   );
 
   return {
