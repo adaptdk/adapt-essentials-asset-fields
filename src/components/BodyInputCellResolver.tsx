@@ -1,18 +1,30 @@
-import { TableCell, RelativeDateTime } from '@contentful/f36-components';
+import {
+  TableCell,
+  RelativeDateTime,
+  Text,
+  Flex,
+} from '@contentful/f36-components';
 import { AssetProps } from 'contentful-management/dist/typings/entities/asset';
+import { Avatar } from '@contentful/f36-avatar';
 
 import { AssetInputFieldText } from './AssetInputFieldText';
 import { EntryStatus } from './EntryStatus';
 import useLocales from './hooks/useLocales';
 import { AvailableColumns } from './hooks/useColumns';
+import useUser from './hooks/useUser';
 
 interface BodyInputCellResolverProps {
   column: AvailableColumns;
   asset: AssetProps;
 }
 
-export const BodyInputCellResolver = ({column, asset}:BodyInputCellResolverProps) => {
+export const BodyInputCellResolver = ({
+  column,
+  asset,
+}: BodyInputCellResolverProps) => {
   const { enabledLocales } = useLocales();
+  const user = useUser(asset.sys.updatedBy.sys.id);
+
   switch (column) {
     case 'title':
       return (
@@ -54,7 +66,16 @@ export const BodyInputCellResolver = ({column, asset}:BodyInputCellResolverProps
         </TableCell>
       );
     case 'updatedBy':
-      return <TableCell key={column}>{asset.sys.updatedBy.sys.id}</TableCell>;
+      return (
+        <TableCell key={column}>
+          <Flex gap="spacingXs" alignItems="center">
+            <Avatar src={user.avatarUrl} size="tiny" />
+            <Text fontColor="gray900">
+              {user.firstName} {user.lastName}
+            </Text>
+          </Flex>
+        </TableCell>
+      );
     case 'status':
       return (
         <TableCell key={column} style={{ width: '50px' }}>

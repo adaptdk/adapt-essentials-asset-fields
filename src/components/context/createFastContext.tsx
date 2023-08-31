@@ -76,6 +76,7 @@ const contextDefaults = {
   selectedEntries: [],
   assetEntries: [],
   entriesLoading: true,
+  users: {},
 } as const;
 
 type ContextDefaults = typeof contextDefaults;

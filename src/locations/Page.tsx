@@ -1,10 +1,12 @@
-import { useEffect, lazy, Suspense } from 'react';
+import { lazy, Suspense } from 'react';
 import { Route, BrowserRouter, Routes } from 'react-router-dom';
-import { Heading, Box, Checkbox, Flex } from '@contentful/f36-components';
+import { Heading, Box, Flex } from '@contentful/f36-components';
 import { Workbench } from '@contentful/f36-workbench';
 
 import { PageLayout } from '../components/PageLayout';
-import { Provider, useStore } from '../components/context/createFastContext';
+import { Provider } from '../components/context/createFastContext';
+import useUsers from '../components/hooks/useUsers';
+
 
 const Dashboard = lazy(() => import('../components/Dashboard'));
 
@@ -13,13 +15,13 @@ function NotFound() {
 }
 
 const Page = () => {
+  useUsers();
   return (
     <Workbench>
       <Workbench.Header
         title={'Asset fields'}
         actions={
           <Flex gap="2rem" alignItems="center">
- 
           </Flex>
         }
       />
@@ -35,14 +37,6 @@ const Page = () => {
                   </Suspense>
                 }
               />
-              {/* <Route
-                path="incomplete"
-                element={
-                  <Suspense fallback={null}>
-                    <IncompleteEntries contentTypes={contentTypes} />
-                  </Suspense>
-                }
-              /> */}
               <Route
                 path="*"
                 element={
@@ -55,9 +49,6 @@ const Page = () => {
           </Routes>
         </Box>
       </Workbench.Content>
-      {/* <Workbench.Sidebar>
-        <div>Hello</div>
-      </Workbench.Sidebar> */}
     </Workbench>
   );
 };
