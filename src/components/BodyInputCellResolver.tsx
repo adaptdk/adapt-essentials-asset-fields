@@ -69,7 +69,7 @@ export const BodyInputCellResolver = ({
       return (
         <TableCell key={column}>
           <Flex gap="spacingXs" alignItems="center">
-            <Avatar src={user.avatarUrl} size="tiny" />
+            {user.avatarUrl && <Avatar src={user.avatarUrl} size="tiny" />}
             <Text fontColor="gray900">
               {user.firstName} {user.lastName}
             </Text>
