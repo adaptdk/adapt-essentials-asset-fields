@@ -2,7 +2,12 @@ import { useDebounce } from '@uidotdev/usehooks';
 import { useState, useEffect } from 'react';
 import { useCMA, useSDK } from '@contentful/react-apps-toolkit';
 import { PageAppSDK } from '@contentful/app-sdk';
-import { TextInput, Textarea, FormControl, Caption } from '@contentful/f36-components';
+import {
+  TextInput,
+  Textarea,
+  FormControl,
+  Caption,
+} from '@contentful/f36-components';
 import { AssetProps } from 'contentful-management/dist/typings/entities/asset';
 import { extractContentfulFieldError } from './utils/entries.ts';
 import useLocales from './hooks/useLocales.tsx';
@@ -25,7 +30,8 @@ const AssetInputFieldTextComponent = ({
   rows = 1,
   showLocaleLabel = false,
 }: AssetInputFieldTextComponentProps) => {
-  const initialValue = asset.fields[field]?.[locale] ?? asset.fields.file?.[locale]?.[field] ?? '';
+  const initialValue =
+    asset.fields[field]?.[locale] ?? asset.fields.file?.[locale]?.[field] ?? '';
   const { updateAssetEntry } = useAssetEntries();
   const [newFieldValue, setNewFieldValue] = useState(initialValue);
   const [error, setError] = useState<string | null>(null);
@@ -33,43 +39,46 @@ const AssetInputFieldTextComponent = ({
   const cma = useCMA();
 
   useEffect(() => {
-    if (initialValue === debouncedFieldValue) {
-      return;
-    }
+    async function fetchData() {
+      if (initialValue === debouncedFieldValue) {
+        return;
+      }
 
-    const fileNameEntry = {
-      ...asset,
-      fields: {
-        ...asset.fields,
-        file: {
-          [locale]: {
-            ...asset.fields.file[locale],
-            [field]: debouncedFieldValue,
+      const fileNameEntry = {
+        ...asset,
+        fields: {
+          ...asset.fields,
+          file: {
+            [locale]: {
+              ...asset.fields.file[locale],
+              [field]: debouncedFieldValue,
+            },
           },
         },
-      },
-    };
-    const fieldEntry = {
-      ...asset,
-      fields: {
-        ...asset.fields,
-        [field]: {
-          [locale]: debouncedFieldValue,
+      };
+      const fieldEntry = {
+        ...asset,
+        fields: {
+          ...asset.fields,
+          [field]: {
+            [locale]: debouncedFieldValue,
+          },
         },
-      },
-    };
-    const rawData = field === 'fileName' ? fileNameEntry : fieldEntry;
-    const assetId = {
-      assetId: asset.sys.id,
-    };
+      };
+      const rawData = field === 'fileName' ? fileNameEntry : fieldEntry;
+      const assetId = {
+        assetId: asset.sys.id,
+      };
 
-    cma.asset
-      .update(assetId, rawData)
-      .then((result) => {
+      try {
+        const result = await cma.asset.update(assetId, rawData);
         updateAssetEntry(result);
-      })
-      .catch((error) => setError(extractContentfulFieldError(error)));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+      } catch (error) {
+        setError(extractContentfulFieldError(error));
+      }
+    }
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedFieldValue]);
 
   const { localeNames } = useLocales();

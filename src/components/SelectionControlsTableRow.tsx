@@ -108,50 +108,62 @@ const SelectionControlsTableRow = () => {
       collection: AssetProps[],
       confirmed = false
     ) =>
-    () => {
+    async () => {
       if (!confirmed && actionKey === 'delete') {
-        sdk.dialogs
-          .openConfirm({
-            title: `Are you sure you want to permanently delete ${
-              collection.at(1) ? 'these assets' : 'this asset'
-            }?`,
-            message: `Once you delete ${
-              collection.at(1) ? 'these assets' : 'this asset'
-            }, it's gone for good and cannot be retrieved.`,
-            intent: 'negative',
-            confirmLabel: 'Permanently delete',
-            cancelLabel: 'Cancel',
+        const linksResult = await Promise.all(
+          collection.map((assetEntry) => {
+            return cma.entry.getMany({
+              query: {
+                links_to_asset: assetEntry.sys.id,
+              },
+            });
           })
-          .then((confirmationClicked) => {
-            console.log({ confirmationClicked });
-            if (confirmationClicked) {
-              performSelectionAction(actionKey, collection, true)();
-            }
-          });
+        );
+        const links = Array.from(
+          new Set(
+            linksResult.flatMap((result) =>
+              result.items.map((item) => item.sys.id)
+            )
+          )
+        );
+
+        const usedInMessage = links.at(0) ? ` It is used in: ${links.join(', ')}` : '';
+  
+        const message = `Once you delete ${
+          collection.at(1) ? 'these assets' : 'this asset'
+        }, it's gone for good and cannot be retrieved.${usedInMessage}`;
+
+        const confirmationClicked = await sdk.dialogs.openConfirm({
+          title: `Are you sure you want to permanently delete ${
+            collection.at(1) ? 'these assets' : 'this asset'
+          }?`,
+          message,
+          intent: 'negative',
+          confirmLabel: 'Permanently delete',
+          cancelLabel: 'Cancel',
+        });
+        if (confirmationClicked) {
+          performSelectionAction(actionKey, collection, true)();
+        }
         return;
       }
       setPerformingAction(actionMap[actionKey].actionLabel);
-      Promise.all(
+      const updatedEntries = await Promise.all(
         collection.map((assetEntry) =>
           actionMap[actionKey].cma({ assetId: assetEntry.sys.id }, assetEntry)
         )
-      )
-        .then((updatedEntries) => {
-          if (actionKey === 'delete') {
-            setSelectedEntries([]);
-            setAssetEntries(
-              assetEntries.filter(
-                (assetEntry) => !collection.includes(assetEntry)
-              )
-            );
-            return;
-          }
-          updateAssetEntries(updatedEntries);
-        })
-        .then(() => {
-          setPerformingAction(null);
-          clearSelection();
-        });
+      );
+      if (actionKey === 'delete') {
+        setSelectedEntries([]);
+        setAssetEntries(
+          assetEntries.filter((assetEntry) => !collection.includes(assetEntry))
+        );
+        setPerformingAction(null);
+        return;
+      }
+      updateAssetEntries(updatedEntries);
+      setPerformingAction(null);
+      clearSelection();
     };
 
   return (
