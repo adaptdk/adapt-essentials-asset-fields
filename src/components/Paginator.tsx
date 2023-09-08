@@ -20,6 +20,7 @@ const Paginator = () => {
   useEffect(() => {
     setIsLoading(true);
     setSkip(activePage * DEFAULT_LIMIT);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activePage]);
 
   useEffect(() => {
@@ -38,6 +39,7 @@ const Paginator = () => {
       setIsLoading(false);
     }
     fetchData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cma.asset, setAssetEntries, skip]);
 
   const pageChangeHandler = (activePage) => {

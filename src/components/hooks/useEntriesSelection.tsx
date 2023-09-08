@@ -1,7 +1,7 @@
 import { useStore } from "../context/createFastContext";
 
 const useEntriesSelection = () => {
-  const [selectedEntries, setStore] = useStore<string[] | readonly []>(
+  const [selectedEntries, setStore] = useStore(
     (store) => store['selectedEntries']
   );
   const setSelectedEntries = (entries) => setStore({ selectedEntries: entries });

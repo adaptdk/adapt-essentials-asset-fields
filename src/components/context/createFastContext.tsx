@@ -5,6 +5,8 @@ import React, {
   useCallback,
   useSyncExternalStore,
 } from 'react';
+import { AssetProps, UserProps } from "contentful-management";
+import { R } from 'vitest/dist/types-2b1c412e.js';
 
 function createFastContext<Store>(initialState: Store) {
   function useStoreData(): {
@@ -70,7 +72,16 @@ function createFastContext<Store>(initialState: Store) {
   };
 }
 
-const contextDefaults = {
+type DefaultsType = {
+  enabledLocales: string[] | null,
+  visibleColumns: string[] | null,
+  selectedEntries: string[] | null,
+  assetEntries: readonly AssetProps[] | null,
+  entriesLoading: boolean,
+  users: Record<string, UserProps>,
+}
+
+const contextDefaults: DefaultsType = {
   enabledLocales: null,
   visibleColumns: null,
   selectedEntries: [],

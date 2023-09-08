@@ -9,7 +9,7 @@ const useAssetEntries = () => {
     setStore({ entriesLoading: isLoading });
   };
 
-  return {entriesLoading, setIsLoading};
+  return { entriesLoading, setIsLoading };
 };
 
 export default useAssetEntries;

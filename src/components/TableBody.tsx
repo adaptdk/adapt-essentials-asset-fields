@@ -5,7 +5,6 @@ import {
   Checkbox,
   Box,
   SkeletonContainer,
-  SkeletonDisplayText,
   SkeletonImage,
 } from '@contentful/f36-components';
 import { Image } from '@contentful/f36-image';

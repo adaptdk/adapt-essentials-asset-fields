@@ -1,9 +1,8 @@
 import { useCallback } from "react";
 import { useStore } from "../context/createFastContext";
-import { AssetProps } from "contentful-management";
 
 const useAssetEntries = () => {
-  const [assetEntries, setStore] = useStore<AssetProps[]>(
+  const [assetEntries, setStore] = useStore(
     (store) => store['assetEntries']
   );
 
