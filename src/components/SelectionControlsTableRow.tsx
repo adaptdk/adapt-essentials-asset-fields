@@ -12,14 +12,17 @@ import useEntriesSelection from './hooks/useEntriesSelection';
 import useColumns from './hooks/useColumns';
 import useAssetEntries from './hooks/useAssetEntries';
 import { EntryStatus, getEntryStatus } from './utils/entries';
-import { useCMA } from '@contentful/react-apps-toolkit';
+import { useCMA, useSDK } from '@contentful/react-apps-toolkit';
+import { AssetProps } from 'contentful-management';
 
 const SelectionControlsTableRow = () => {
   const cma = useCMA();
+  const sdk = useSDK();
   const [performingAction, setPerformingAction] = useState(null);
   const { selectedEntries, setSelectedEntries } = useEntriesSelection();
   const { visibleColumns } = useColumns();
-  const { assetEntries, setAssetEntries, updateAssetEntries } = useAssetEntries();
+  const { assetEntries, setAssetEntries, updateAssetEntries } =
+    useAssetEntries();
   const selectedAssets = useMemo(
     () =>
       selectedEntries?.map((id) =>
@@ -97,28 +100,59 @@ const SelectionControlsTableRow = () => {
       actionLabel: 'Unarchiving...',
       cma: cma.asset.unarchive,
     },
-  };
+  } as const;
 
-  const performSelectionAction = (actionKey, collection) => () => {
-    setPerformingAction(actionMap[actionKey].actionLabel);
-    Promise.all(
-      collection.map((assetEntry) =>
-        actionMap[actionKey].cma({ assetId: assetEntry.sys.id }, assetEntry)
+  const performSelectionAction =
+    (
+      actionKey: keyof typeof actionMap,
+      collection: AssetProps[],
+      confirmed = false
+    ) =>
+    () => {
+      if (!confirmed && actionKey === 'delete') {
+        sdk.dialogs
+          .openConfirm({
+            title: `Are you sure you want to permanently delete ${
+              collection.at(1) ? 'these assets' : 'this asset'
+            }?`,
+            message: `Once you delete ${
+              collection.at(1) ? 'these assets' : 'this asset'
+            }, it's gone for good and cannot be retrieved.`,
+            intent: 'negative',
+            confirmLabel: 'Permanently delete',
+            cancelLabel: 'Cancel',
+          })
+          .then((confirmationClicked) => {
+            console.log({ confirmationClicked });
+            if (confirmationClicked) {
+              performSelectionAction(actionKey, collection, true)();
+            }
+          });
+        return;
+      }
+      setPerformingAction(actionMap[actionKey].actionLabel);
+      Promise.all(
+        collection.map((assetEntry) =>
+          actionMap[actionKey].cma({ assetId: assetEntry.sys.id }, assetEntry)
+        )
       )
-    )
-      .then(updatedEntries => {
-        if (actionKey === 'delete') {
-          setSelectedEntries([])
-          setAssetEntries(assetEntries.filter((assetEntry) => !collection.includes(assetEntry)));
-          return;
-        }
-        updateAssetEntries(updatedEntries);
-      })
-      .then(() => {
-        setPerformingAction(null);
-        clearSelection();
-      });
-  };
+        .then((updatedEntries) => {
+          if (actionKey === 'delete') {
+            setSelectedEntries([]);
+            setAssetEntries(
+              assetEntries.filter(
+                (assetEntry) => !collection.includes(assetEntry)
+              )
+            );
+            return;
+          }
+          updateAssetEntries(updatedEntries);
+        })
+        .then(() => {
+          setPerformingAction(null);
+          clearSelection();
+        });
+    };
 
   return (
     selectedEntries.at(0) && (
@@ -159,7 +193,10 @@ const SelectionControlsTableRow = () => {
                   <Button
                     variant="secondary"
                     size="small"
-                    onClick={performSelectionAction('unpublish', selectedAssets)}
+                    onClick={performSelectionAction(
+                      'unpublish',
+                      selectedAssets
+                    )}
                   >
                     Unpublish
                   </Button>
@@ -170,7 +207,10 @@ const SelectionControlsTableRow = () => {
                   <Button
                     variant="positive"
                     size="small"
-                    onClick={performSelectionAction('republish', selectedAssets)}
+                    onClick={performSelectionAction(
+                      'republish',
+                      selectedAssets
+                    )}
                   >
                     Republish
                   </Button>
