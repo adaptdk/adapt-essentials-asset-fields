@@ -16,11 +16,11 @@ export default function Dashboard() {
         <Table>
           <Table.Head>
             <Table.Row>
-              <Table.Cell style={{ verticalAlign: 'bottom' }}>
+              <Table.Cell style={{ verticalAlign: 'bottom'}} >
                 <SelectAllCheckbox />
               </Table.Cell>
               <VisibleColumnsCell />
-              <TableCell>
+              <TableCell align='right' width="50px">
                 <SettingsPopover />
               </TableCell>
             </Table.Row>

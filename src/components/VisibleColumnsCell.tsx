@@ -1,11 +1,13 @@
-import { TableCell } from "./TableCell";
-import useColumns from "./hooks/useColumns";
+import { TableCell } from './TableCell';
+import useColumns from './hooks/useColumns';
 
 const VisibleColumnsCell = () => {
   const { columnDetails, visibleColumns } = useColumns();
 
   return visibleColumns.map((column) => (
-    <TableCell key={column}>{columnDetails[column].label}</TableCell>
+    <TableCell key={column} width={column == 'status' ? '50px' : 'inherit'}>
+      {columnDetails[column].label}
+    </TableCell>
   ));
 };
 

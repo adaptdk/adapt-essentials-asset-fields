@@ -1,8 +1,9 @@
 import { useCallback } from "react";
 import { useStore } from "../context/createFastContext";
+import { AssetProps } from "contentful-management";
 
 const useAssetEntries = () => {
-  const [assetEntries, setStore] = useStore(
+  const [assetEntries, setStore] = useStore<AssetProps[]>(
     (store) => store['assetEntries']
   );
 
@@ -12,6 +13,18 @@ const useAssetEntries = () => {
         assetEntries: assetEntries.map((existingAssetEntry) =>
           existingAssetEntry.sys.id === assetEntry.sys.id ? assetEntry : existingAssetEntry
         ),
+      });
+    },
+    [assetEntries, setStore]
+  );
+
+  const updateAssetEntries = useCallback(
+    (updatedEntries) => {
+      setStore({
+        assetEntries: assetEntries.map((existingAssetEntry) => {
+          return updatedEntries.find(
+            (updatedEntry) => updatedEntry.sys.id === existingAssetEntry.sys.id) || existingAssetEntry;
+        }),
       });
     },
     [assetEntries, setStore]
@@ -28,6 +41,7 @@ const useAssetEntries = () => {
     assetEntries,
     setAssetEntries,
     updateAssetEntry,
+    updateAssetEntries,
   }
 }
 

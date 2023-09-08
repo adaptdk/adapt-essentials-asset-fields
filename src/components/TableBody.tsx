@@ -4,7 +4,9 @@ import {
   Flex,
   Checkbox,
   Box,
-  Skeleton,
+  SkeletonContainer,
+  SkeletonDisplayText,
+  SkeletonImage,
 } from '@contentful/f36-components';
 import { Image } from '@contentful/f36-image';
 
@@ -24,18 +26,23 @@ const TableBody = () => {
 
   return (
     <Table.Body>
-      {!entriesLoading &&
-        assetEntries.map((asset) => (
-          <Table.Row key={asset.sys.id}>
-            <TableCell style={{ width: '120px' }}>
-              <Flex alignItems="center">
-                <Checkbox
-                  isChecked={selectedEntries.includes(asset.sys.id)}
-                  onChange={(event) =>
-                    setSelected(asset.sys.id, event?.target?.checked)
-                  }
-                />
-                <Box margin="spacing2Xs">
+      {assetEntries.map((asset) => (
+        <Table.Row key={asset.sys.id}>
+          <TableCell style={{ width: '120px' }}>
+            <Flex alignItems="center">
+              <Checkbox
+                isChecked={selectedEntries.includes(asset.sys.id)}
+                onChange={(event) =>
+                  setSelected(asset.sys.id, event?.target?.checked)
+                }
+              />
+              <Box margin="spacing2Xs">
+                {entriesLoading && (
+                  <SkeletonContainer style={{ height: "60px"}} >
+                    <SkeletonImage height="60px" width="60px" />
+                  </SkeletonContainer>
+                )}
+                {!entriesLoading && (
                   <Image
                     alt={asset.fields.title?.[defaultLocale]}
                     height="60px"
@@ -43,22 +50,21 @@ const TableBody = () => {
                     style={{ borderRadius: '4px' }}
                     src={`${asset.fields.file?.[defaultLocale].url}?w=60&h=60&fit=thumb`}
                   />
-                </Box>
-              </Flex>
-            </TableCell>
-            {visibleColumns.map((column) => (
-              <BodyInputCellResolver
-                key={column}
-                column={column}
-                asset={asset}
-              />
-            ))}
-            <TableCell style={{ width: '50px' }} />
-          </Table.Row>
-        ))}
-      {entriesLoading && (
-        <Skeleton.Row rowCount={5} columnCount={visibleColumns.length + 1} />
-      )}
+                )}
+              </Box>
+            </Flex>
+          </TableCell>
+          {visibleColumns.map((column, index) => (
+            <BodyInputCellResolver
+              key={column}
+              column={column}
+              asset={asset}
+              loading={entriesLoading}
+              colSpan={visibleColumns.length - index === 1 ? 2 : null}
+            />
+          ))}
+        </Table.Row>
+      ))}
     </Table.Body>
   );
 };

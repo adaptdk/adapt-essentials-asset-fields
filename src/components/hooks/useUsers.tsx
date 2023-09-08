@@ -20,7 +20,7 @@ const useUsers = () => {
       });
     };
     getUsers();
-  }, []);
+  }, [cma.user, setStore, users]);
   
   return users;
 }
