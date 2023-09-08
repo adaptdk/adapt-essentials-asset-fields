@@ -76,7 +76,7 @@ type StoreType = {
   enabledLocales: string[] | null,
   visibleColumns: string[] | null,
   selectedEntries: string[] | null,
-  assetEntries: readonly AssetProps[] | null,
+  assetEntries: AssetProps[] | null,
   entriesLoading: boolean,
   users: Record<string, UserProps>,
 }
@@ -84,8 +84,8 @@ type StoreType = {
 const contextDefaults: StoreType = {
   enabledLocales: null,
   visibleColumns: null,
-  selectedEntries: [],
-  assetEntries: [],
+  selectedEntries: [] as string[],
+  assetEntries: [] as AssetProps[],
   entriesLoading: true,
   users: {},
 } as const;

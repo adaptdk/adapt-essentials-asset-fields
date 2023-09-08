@@ -2,11 +2,11 @@ import { useMemo } from 'react';
 import { locations } from '@contentful/app-sdk';
 import { useSDK } from '@contentful/react-apps-toolkit';
 
-import PageRouter from './locations/Page';
+import Page from './locations/Page';
 
 const ComponentLocationSettings = {
-  [locations.LOCATION_HOME]: PageRouter,
-  [locations.LOCATION_PAGE]: PageRouter,
+  [locations.LOCATION_HOME]: Page,
+  [locations.LOCATION_PAGE]: Page,
 };
 
 const App = () => {

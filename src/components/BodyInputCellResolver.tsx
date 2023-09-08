@@ -7,9 +7,8 @@ import {
   SkeletonDisplayText,
   SkeletonBodyText,
 } from '@contentful/f36-components';
+import { Image } from '@contentful/f36-image';
 import { AssetProps } from 'contentful-management/dist/typings/entities/asset';
-import { Avatar } from '@contentful/f36-avatar';
-
 import { AssetInputFieldText } from './AssetInputFieldText';
 import { EntryStatus } from './EntryStatus';
 import useLocales from './hooks/useLocales';
@@ -85,7 +84,15 @@ export const BodyInputCellResolver = ({
       return (
         <TableCell key={column} {...rest}>
           <Flex gap="spacingXs" alignItems="center">
-            {user.avatarUrl && <Avatar src={user.avatarUrl} size="tiny" />}
+            {user.avatarUrl && (
+              <Image
+                src={user.avatarUrl}
+                height="25px"
+                width="25px"
+                style={{ borderRadius: '50%' }}
+                alt={`${user.firstName} ${user.lastName}`}
+              />
+            )}
             <Text fontColor="gray900">
               {user.firstName} {user.lastName}
             </Text>
@@ -94,7 +101,11 @@ export const BodyInputCellResolver = ({
       );
     case 'status':
       return (
-        <TableCell key={column} style={{ width: '50px', maxWidth: "50px" }} {...rest}>
+        <TableCell
+          key={column}
+          style={{ width: '50px', maxWidth: '50px' }}
+          {...rest}
+        >
           {!loading && <EntryStatus sys={asset.sys} />}
           {loading && (
             <SkeletonContainer style={{ height: '60px' }}>
