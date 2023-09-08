@@ -72,7 +72,7 @@ function createFastContext<Store>(initialState: Store) {
   };
 }
 
-type DefaultsType = {
+type StoreType = {
   enabledLocales: string[] | null,
   visibleColumns: string[] | null,
   selectedEntries: string[] | null,
@@ -81,7 +81,7 @@ type DefaultsType = {
   users: Record<string, UserProps>,
 }
 
-const contextDefaults: DefaultsType = {
+const contextDefaults: StoreType = {
   enabledLocales: null,
   visibleColumns: null,
   selectedEntries: [],
