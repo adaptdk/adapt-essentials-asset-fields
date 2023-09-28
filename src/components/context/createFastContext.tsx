@@ -6,7 +6,6 @@ import React, {
   useSyncExternalStore,
 } from 'react';
 import { AssetProps, UserProps } from "contentful-management";
-import { R } from 'vitest/dist/types-2b1c412e.js';
 
 function createFastContext<Store>(initialState: Store) {
   function useStoreData(): {
