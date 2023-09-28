@@ -5,7 +5,7 @@ import React, {
   useCallback,
   useSyncExternalStore,
 } from 'react';
-import { AssetProps, UserProps } from "contentful-management";
+import { AssetProps, UserProps } from 'contentful-management';
 
 function createFastContext<Store>(initialState: Store) {
   function useStoreData(): {
@@ -72,13 +72,21 @@ function createFastContext<Store>(initialState: Store) {
 }
 
 type StoreType = {
-  enabledLocales: string[] | null,
-  visibleColumns: string[] | null,
-  selectedEntries: string[] | null,
-  assetEntries: AssetProps[] | null,
-  entriesLoading: boolean,
-  users: Record<string, UserProps>,
-}
+  enabledLocales: string[] | null;
+  visibleColumns: string[] | null;
+  selectedEntries: string[] | null;
+  assetEntries: AssetProps[] | null;
+  entriesLoading: boolean;
+  users: Record<string, UserProps>;
+  total: number;
+  activePage: number;
+  skip: number;
+  order: {
+    by: string;
+    direction: string;
+  };
+  limit: number;
+};
 
 const contextDefaults: StoreType = {
   enabledLocales: null,
@@ -87,6 +95,14 @@ const contextDefaults: StoreType = {
   assetEntries: [] as AssetProps[],
   entriesLoading: true,
   users: {},
+  total: 0,
+  activePage: 0,
+  skip: 0,
+  order: {
+    by: '-sys.createdAt',
+    direction: 'desc',
+  },
+  limit: 10,
 } as const;
 
 type ContextDefaults = typeof contextDefaults;

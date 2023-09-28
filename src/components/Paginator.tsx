@@ -1,17 +1,22 @@
 import { Pagination } from '@contentful/f36-components';
 import { useCMA } from '@contentful/react-apps-toolkit';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import useEntriesSelection from './hooks/useEntriesSelection';
 import useAssetEntries from './hooks/useAssetEntries';
 import useEntriesLoading from './hooks/useEntriesLoading';
-
-const DEFAULT_LIMIT = 10;
+import useTotal from './hooks/useTotal';
+import useActivePage from './hooks/useActivePage';
+import useSkip from './hooks/useSkip';
+import useOrder from './hooks/useOrder';
+import useLimit from './hooks/useLimit';
 
 const Paginator = () => {
   const { setIsLoading } = useEntriesLoading();
-  const [total, setTotal] = useState(0);
-  const [activePage, setActivePage] = useState(0);
-  const [skip, setSkip] = useState(0);
+  const { total, setTotal } = useTotal();
+  const { activePage, setActivePage } = useActivePage();
+  const { skip, setSkip } = useSkip();
+  const { limit } = useLimit();
+  const { by: order } = useOrder();
   const { assetEntries, setAssetEntries } = useAssetEntries();
   const { setSelectedEntries } = useEntriesSelection();
   const { selectedEntries } = useEntriesSelection();
@@ -19,8 +24,8 @@ const Paginator = () => {
 
   useEffect(() => {
     setIsLoading(true);
-    setSkip(activePage * DEFAULT_LIMIT);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    setSkip(activePage * limit);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activePage]);
 
   useEffect(() => {
@@ -29,8 +34,8 @@ const Paginator = () => {
       const assetResponse = await cma.asset.getMany({
         query: {
           skip,
-          limit: DEFAULT_LIMIT,
-          order: '-sys.createdAt',
+          limit,
+          order,
         },
       });
       setTotal(assetResponse.total);
@@ -38,8 +43,8 @@ const Paginator = () => {
       setIsLoading(false);
     }
     fetchData();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cma.asset, setAssetEntries, skip]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cma.asset, setAssetEntries, skip, limit, order]);
 
   const pageChangeHandler = (activePage) => {
     setActivePage(activePage);
@@ -48,14 +53,15 @@ const Paginator = () => {
 
   return (
     selectedEntries.length < 1 && (
-    <Pagination
-      activePage={activePage}
-      onPageChange={pageChangeHandler}
-      isLastPage={total <= activePage * DEFAULT_LIMIT}
-      pageLength={assetEntries.length}
-      itemsPerPage={DEFAULT_LIMIT}
-      totalItems={total}
-    />)
+      <Pagination
+        activePage={activePage}
+        onPageChange={pageChangeHandler}
+        isLastPage={total <= activePage * limit}
+        pageLength={assetEntries.length}
+        itemsPerPage={limit}
+        totalItems={total}
+      />
+    )
   );
 };
 
