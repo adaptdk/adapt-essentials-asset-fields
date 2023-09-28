@@ -6,6 +6,7 @@ import {
   SkeletonContainer,
   SkeletonDisplayText,
   SkeletonBodyText,
+  formatDateAndTime,
 } from '@contentful/f36-components';
 import { Image } from '@contentful/f36-image';
 import { AssetProps } from 'contentful-management/dist/typings/entities/asset';
@@ -73,11 +74,16 @@ export const BodyInputCellResolver = ({
           />
         </TableCell>
       );
-
+    case 'createdAt':
+        return (
+          <TableCell key={column} {...rest}>
+            {formatDateAndTime(asset.sys[column])}
+          </TableCell>
+        );
     case 'updatedAt':
       return (
         <TableCell key={column} {...rest}>
-          <RelativeDateTime date={asset.sys.updatedAt} />
+          <RelativeDateTime date={asset.sys[column]} />
         </TableCell>
       );
     case 'updatedBy':

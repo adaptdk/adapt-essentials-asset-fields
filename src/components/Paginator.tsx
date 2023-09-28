@@ -30,8 +30,7 @@ const Paginator = () => {
         query: {
           skip,
           limit: DEFAULT_LIMIT,
-          // order: '-sys.updatedAt',
-          order: '-sys.id',
+          order: '-sys.createdAt',
         },
       });
       setTotal(assetResponse.total);

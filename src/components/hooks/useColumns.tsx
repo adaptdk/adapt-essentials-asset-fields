@@ -5,6 +5,7 @@ const defaultColumns = [
   { name: 'title', label: 'Title', isVisible: true },
   { name: 'description', label: 'Description', isVisible: true },
   { name: 'filename', label: 'Filename', isVisible: false },
+  { name: 'createdAt', label: 'Created', isVisible: false },
   { name: 'updatedAt', label: 'Updated', isVisible: false },
   { name: 'updatedBy', label: 'By', isVisible: false },
   { name: 'status', label: 'Status', isVisible: true },
