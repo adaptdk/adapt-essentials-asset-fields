@@ -30,20 +30,28 @@ const AssetInputFieldTextComponent = ({
   rows = 1,
   showLocaleLabel = false,
 }: AssetInputFieldTextComponentProps) => {
-  const initialValue =
+  const fieldValueProp =
     asset.fields[field]?.[locale] ?? asset.fields.file?.[locale]?.[field] ?? '';
+  const assetId = asset.sys.id;
   const { updateAssetEntry } = useAssetEntries();
-  const [newFieldValue, setNewFieldValue] = useState(initialValue);
+  const [newFieldValue, setNewFieldValue] = useState(fieldValueProp);
   const [error, setError] = useState<string | null>(null);
   const debouncedFieldValue = useDebounce(newFieldValue, 300);
   const cma = useCMA();
+  useEffect(() => {
+    if (fieldValueProp !== debouncedFieldValue) {
+      setNewFieldValue(fieldValueProp);
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fieldValueProp]);
 
   useEffect(() => {
-    async function fetchData() {
-      if (initialValue === debouncedFieldValue) {
-        return;
-      }
+    if (fieldValueProp === debouncedFieldValue) {
+      return;
+    }
 
+    async function update() {
       const fileNameEntry = {
         ...asset,
         fields: {
@@ -51,7 +59,7 @@ const AssetInputFieldTextComponent = ({
           file: {
             [locale]: {
               ...asset.fields.file[locale],
-              [field]: debouncedFieldValue,
+              [field]: newFieldValue,
             },
           },
         },
@@ -61,36 +69,43 @@ const AssetInputFieldTextComponent = ({
         fields: {
           ...asset.fields,
           [field]: {
-            [locale]: debouncedFieldValue,
+            [locale]: newFieldValue,
           },
         },
       };
       const rawData = field === 'fileName' ? fileNameEntry : fieldEntry;
-      const assetId = {
-        assetId: asset.sys.id,
-      };
-
       try {
-        const result = await cma.asset.update(assetId, rawData);
+        setError(null);
+        const result = await cma.asset.update({ assetId }, rawData);
         updateAssetEntry(result);
       } catch (error) {
+        if (error.code === 'VersionMismatch') {
+          const updatedAsset = await cma.asset.get({ assetId });
+          updateAssetEntry(updatedAsset);
+          setError('Still updating. Try again in a few seconds.');
+          return;
+        }
+
         setError(extractContentfulFieldError(error));
       }
     }
-    fetchData();
+    update();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedFieldValue]);
 
   const { localeNames } = useLocales();
-
   const InputComponent = as === 'Textarea' ? Textarea : TextInput;
+  const inputChangeHandler = (event) => {
+    setNewFieldValue(event.target.value);
+  };
 
   return (
     <>
       {showLocaleLabel && <Caption>{localeNames[locale]}</Caption>}
       <InputComponent
+        key={`${assetId}-${locale}`}
         value={newFieldValue}
-        onChange={(event) => setNewFieldValue(event.target.value)}
+        onChange={inputChangeHandler}
         rows={rows}
       />
       {error && (
@@ -114,7 +129,7 @@ export const AssetInputFieldText = ({
   const locales = localesProp ?? [sdk.locales.default];
   return locales.map((locale) => {
     return (
-      <FormControl key={locale}>
+      <FormControl key={`${asset.sys.id}-${locale}`}>
         <AssetInputFieldTextComponent
           field={field}
           asset={asset}
