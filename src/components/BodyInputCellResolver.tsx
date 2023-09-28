@@ -75,11 +75,11 @@ export const BodyInputCellResolver = ({
         </TableCell>
       );
     case 'createdAt':
-        return (
-          <TableCell key={column} {...rest}>
-            {formatDateAndTime(asset.sys[column])}
-          </TableCell>
-        );
+      return (
+        <TableCell key={column} {...rest}>
+          {formatDateAndTime(asset.sys[column])}
+        </TableCell>
+      );
     case 'updatedAt':
       return (
         <TableCell key={column} {...rest}>
