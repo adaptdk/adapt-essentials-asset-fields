@@ -129,7 +129,7 @@ export const AssetInputFieldText = ({
   const locales = localesProp ?? [sdk.locales.default];
   return locales.map((locale) => {
     return (
-      <FormControl key={`${asset.sys.id}-${locale}`}>
+      <FormControl key={`${asset.sys.id}-${locale}`} marginBottom='none'>
         <AssetInputFieldTextComponent
           field={field}
           asset={asset}

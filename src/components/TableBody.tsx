@@ -43,7 +43,7 @@ const TableBody = () => {
     <Table.Body>
       {assetEntries.map((asset) => (
         <Table.Row key={asset.sys.id}>
-          <TableCell style={{ width: '120px' }}>
+          <TableCell style={{ width: '120px', verticalAlign: 'middle' }}>
             <Flex alignItems="center">
               <Checkbox
                 isChecked={selectedEntries.includes(asset.sys.id)}
@@ -62,6 +62,7 @@ const TableBody = () => {
                 )}
                 {!entriesLoading && (
                   <Asset
+                    style={{ height: '70px' }}
                     src={`${asset.fields.file?.[defaultLocale].url}?w=60&h=60&fit=thumb`}
                     status={getEntryStatus(asset.sys)}
                     type={mapMimeTypeToAssetType(
@@ -79,6 +80,7 @@ const TableBody = () => {
               asset={asset}
               loading={entriesLoading}
               colSpan={visibleColumns.length - index === 1 ? 2 : null}
+              style={{ verticalAlign: 'middle' }}
             />
           ))}
         </Table.Row>
