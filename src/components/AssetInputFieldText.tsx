@@ -69,6 +69,7 @@ const AssetInputFieldTextComponent = ({
         fields: {
           ...asset.fields,
           [field]: {
+            ...asset.fields[field],
             [locale]: newFieldValue,
           },
         },
