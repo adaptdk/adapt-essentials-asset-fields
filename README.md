@@ -1,3 +1,5 @@
+![App icon](doc/app-icon.svg)
+
 # Adapt Essentials: Asset fields
 
 An App for making it easier to change title, description and filename of assets in bulk. It supports in place editing for multiple locales.
@@ -17,3 +19,13 @@ This app makes it easier to go through assets and edit it in bulk.
 The app itself is really simple. Assets are listed with the title, description and status. You can edit the fields in place. The changes are saved automatically. You can also toggle additional fields or locale.
 
 ![Alt text](doc/settings.png)
+
+## Bug reports
+
+If you've found any issues, please open an issue here: [https://github.com/adaptdk/adapt-essentials-asset-fields/issues](https://github.com/adaptdk/adapt-toolkit-color-picker/issues)
+
+## Feature requests
+
+If you think the application is missing any features, please open an issue here: [https://github.com/adaptdk/adapt-toolkit-color-picker/issues](https://github.com/adaptdk/adapt-essentials-asset-fields/issues)
+
+## [Privacy Policy](https://adaptagency.com/privacy-policy)
