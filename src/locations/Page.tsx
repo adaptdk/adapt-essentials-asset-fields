@@ -8,7 +8,7 @@ const Page = () => {
   return (
     <Workbench>
       <Workbench.Header
-        title="Adapt Toolkit: Asset Fields"
+        title="Adapt Essentials: Asset Fields"
         actions={<Flex gap="2rem" alignItems="center"></Flex>}
       />
       <Workbench.Content>
