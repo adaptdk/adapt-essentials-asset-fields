@@ -22,10 +22,10 @@ The app itself is really simple. Assets are listed with the title, description a
 
 ## Bug reports
 
-If you've found any issues, please open an issue here: [https://github.com/adaptdk/adapt-essentials-asset-fields/issues](https://github.com/adaptdk/adapt-toolkit-color-picker/issues)
+If you've found any issues, please open an issue here: [https://github.com/adaptdk/adapt-essentials-asset-fields/issues](https://github.com/adaptdk/adapt-essentials-asset-fields/issues)
 
 ## Feature requests
 
-If you think the application is missing any features, please open an issue here: [https://github.com/adaptdk/adapt-toolkit-color-picker/issues](https://github.com/adaptdk/adapt-essentials-asset-fields/issues)
+If you think the application is missing any features, please open an issue here: [https://github.com/adaptdk/adapt-essentials-asset-fields/issues](https://github.com/adaptdk/adapt-essentials-asset-fields/issues)
 
 ## [Privacy Policy](https://adaptagency.com/privacy-policy)
