@@ -1,26 +1,26 @@
 import { useMemo } from 'react';
-
-import { useStore } from '../context/createFastContext';
 import { PageAppSDK } from '@contentful/app-sdk';
 import { useSDK } from '@contentful/react-apps-toolkit';
+import { useLocalStorage } from 'use-local-storage-extended';
 
 const useLocales = () => {
   const sdk = useSDK<PageAppSDK>();
-  const [_enabledLocales, setEnabledLocales] = useStore(
-    (store) => store['enabledLocales']
-  );
+  // const [_enabledLocales, setEnabledLocales] = useStore(
+  //   (store) => store['enabledLocales']
+  // );
+
+  const [_enabledLocales, setEnabledLocales] = useLocalStorage({
+    key: 'enabledLocales',
+    defaultValue: [sdk.locales.default]
+  });
   const enabledLocales = useMemo(() => {
     const enabledLocalesParam = _enabledLocales ??
       sdk.parameters?.instance?.enabledLocales ?? [sdk.locales.default];
     if (enabledLocalesParam.length < 1) {
-      setEnabledLocales({
-        enabledLocales: [sdk.locales.default],
-      });
+      setEnabledLocales([sdk.locales.default]);
     }
     if (!enabledLocalesParam.includes(sdk.locales.default)) {
-      setEnabledLocales({
-        enabledLocales: [sdk.locales.default, ...enabledLocalesParam],
-      });
+      setEnabledLocales([sdk.locales.default, ...enabledLocalesParam]);
     }
     return enabledLocalesParam;
   }, [
@@ -32,15 +32,9 @@ const useLocales = () => {
 
   const changeLocaleVisibility = (locale, isVisible) => {
     if (isVisible) {
-      setEnabledLocales({
-        enabledLocales: [...enabledLocales, locale],
-      });
+      setEnabledLocales([...enabledLocales, locale]);
     } else {
-      setEnabledLocales({
-        enabledLocales: enabledLocales.filter(
-          (enabledLocale) => enabledLocale !== locale
-        ),
-      });
+      setEnabledLocales(enabledLocales.filter((enabledLocale) => enabledLocale !== locale));
     }
   };
 
