@@ -12,7 +12,6 @@ import { SettingsTrimmedIcon } from '@contentful/f36-icons';
 import { useState } from 'react';
 import useLocales from './hooks/useLocales';
 import useColumns from './hooks/useColumns';
-import useSkip from './hooks/useSkip';
 import useLimit from './hooks/useLimit';
 
 export const SettingsPopover = () => {
