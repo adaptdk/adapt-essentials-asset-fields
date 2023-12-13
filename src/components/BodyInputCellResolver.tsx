@@ -7,6 +7,7 @@ import {
   SkeletonDisplayText,
   SkeletonBodyText,
   formatDateAndTime,
+  BoxProps,
 } from '@contentful/f36-components';
 import { Image } from '@contentful/f36-image';
 import { AssetProps } from 'contentful-management/dist/typings/entities/asset';
@@ -28,7 +29,7 @@ export const BodyInputCellResolver = ({
   asset,
   loading = false,
   ...rest
-}: BodyInputCellResolverProps) => {
+}: BodyInputCellResolverProps & BoxProps) => {
   const { enabledLocales } = useLocales();
   const user = useUser(asset.sys.updatedBy.sys.id);
 
