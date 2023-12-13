@@ -5,10 +5,6 @@ import { useLocalStorage } from 'use-local-storage-extended';
 
 const useLocales = () => {
   const sdk = useSDK<PageAppSDK>();
-  // const [_enabledLocales, setEnabledLocales] = useStore(
-  //   (store) => store['enabledLocales']
-  // );
-
   const [_enabledLocales, setEnabledLocales] = useLocalStorage({
     key: 'enabledLocales',
     defaultValue: [sdk.locales.default]
