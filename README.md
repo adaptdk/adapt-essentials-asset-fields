@@ -1,6 +1,6 @@
-![App icon](doc/app-icon.svg)
+![App icon](doc/app-icon.svg) [![Install to Contentful](https://www.ctfstatic.com/button/install-small.svg)](https://app.contentful.com/deeplink?link=apps&id=3Jt0c7RHcmPsB3mJAQC4iP)
 
-# Adapt Essentials: Asset fields
+# Adapt Essentials: Asset fields 
 
 An App for making it easier to change title, description and filename of assets in bulk. It supports in place editing for multiple locales.
 
