@@ -1,13 +1,4 @@
-import {
-  Asset,
-  Box,
-  Checkbox,
-  Flex,
-  SkeletonContainer,
-  SkeletonImage,
-  Table,
-  TableCell,
-} from '@contentful/f36-components';
+import { Asset, Box, Checkbox, Flex, SkeletonContainer, SkeletonImage, Table, TableCell } from '@contentful/f36-components';
 
 import { BodyInputCellResolver } from './BodyInputCellResolver';
 import useAssetEntries from './hooks/useAssetEntries';
@@ -45,16 +36,8 @@ const TableBody = () => {
         <Table.Row key={asset.sys.id}>
           <TableCell style={{ width: '120px', verticalAlign: 'middle' }}>
             <Flex alignItems="center">
-              <Checkbox
-                isChecked={selectedEntries.includes(asset.sys.id)}
-                onChange={(event) =>
-                  setSelected(asset.sys.id, event?.target?.checked)
-                }
-              />
-              <Box
-                onClick={openAsset(asset.sys.id)}
-                style={{ cursor: 'pointer', margin: 'auto' }}
-              >
+              <Checkbox isChecked={selectedEntries.includes(asset.sys.id)} onChange={(event) => setSelected(asset.sys.id, event?.target?.checked)} />
+              <Box onClick={openAsset(asset.sys.id)} style={{ cursor: 'pointer', margin: 'auto' }}>
                 {entriesLoading && (
                   <SkeletonContainer style={{ height: '60px' }}>
                     <SkeletonImage height="60px" width="60px" />
@@ -65,9 +48,7 @@ const TableBody = () => {
                     style={{ height: '70px' }}
                     src={`${asset.fields.file?.[defaultLocale].url}?w=60&h=60&fit=thumb`}
                     status={getEntryStatus(asset.sys)}
-                    type={mapMimeTypeToAssetType(
-                      asset.fields.file?.[defaultLocale].contentType
-                    )}
+                    type={mapMimeTypeToAssetType(asset.fields.file?.[defaultLocale].contentType)}
                   />
                 )}
               </Box>

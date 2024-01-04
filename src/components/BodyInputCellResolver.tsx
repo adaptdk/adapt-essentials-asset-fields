@@ -24,12 +24,7 @@ interface BodyInputCellResolverProps {
   loading?: boolean;
 }
 
-export const BodyInputCellResolver = ({
-  column,
-  asset,
-  loading = false,
-  ...rest
-}: BodyInputCellResolverProps & BoxProps) => {
+export const BodyInputCellResolver = ({ column, asset, loading = false, ...rest }: BodyInputCellResolverProps & BoxProps) => {
   const { enabledLocales } = useLocales();
   const user = useUser(asset.sys.updatedBy.sys.id);
 
@@ -46,33 +41,19 @@ export const BodyInputCellResolver = ({
     case 'title':
       return (
         <TableCell key={column} {...rest}>
-          <AssetInputFieldText
-            asset={asset}
-            locales={enabledLocales}
-            field={'title'}
-          />
+          <AssetInputFieldText asset={asset} locales={enabledLocales} field={'title'} />
         </TableCell>
       );
     case 'description':
       return (
         <TableCell key={column} {...rest}>
-          <AssetInputFieldText
-            as={'Textarea'}
-            rows={1}
-            asset={asset}
-            locales={enabledLocales}
-            field={'description'}
-          />
+          <AssetInputFieldText as={'Textarea'} rows={1} asset={asset} locales={enabledLocales} field={'description'} />
         </TableCell>
       );
     case 'filename':
       return (
         <TableCell key={column} {...rest}>
-          <AssetInputFieldText
-            asset={asset}
-            locales={enabledLocales}
-            field={'fileName'}
-          />
+          <AssetInputFieldText asset={asset} locales={enabledLocales} field={'fileName'} />
         </TableCell>
       );
     case 'createdAt':
@@ -92,13 +73,7 @@ export const BodyInputCellResolver = ({
         <TableCell key={column} {...rest}>
           <Flex gap="spacingXs" alignItems="center">
             {user?.avatarUrl && (
-              <Image
-                src={user.avatarUrl}
-                height="25px"
-                width="25px"
-                style={{ borderRadius: '50%' }}
-                alt={`${user.firstName} ${user.lastName}`}
-              />
+              <Image src={user.avatarUrl} height="25px" width="25px" style={{ borderRadius: '50%' }} alt={`${user.firstName} ${user.lastName}`} />
             )}
             {user?.firstName && user?.lastName && (
               <Text fontColor="gray900">
@@ -110,11 +85,7 @@ export const BodyInputCellResolver = ({
       );
     case 'status':
       return (
-        <TableCell
-          key={column}
-          style={{ width: '50px', maxWidth: '50px' }}
-          {...rest}
-        >
+        <TableCell key={column} style={{ width: '50px', maxWidth: '50px' }} {...rest}>
           {!loading && <EntryStatus sys={asset.sys} />}
           {loading && (
             <SkeletonContainer style={{ height: '60px' }}>

@@ -2,12 +2,7 @@ import { useDebounce } from '@uidotdev/usehooks';
 import { useState, useEffect } from 'react';
 import { useCMA, useSDK } from '@contentful/react-apps-toolkit';
 import { PageAppSDK } from '@contentful/app-sdk';
-import {
-  TextInput,
-  Textarea,
-  FormControl,
-  Caption,
-} from '@contentful/f36-components';
+import { TextInput, Textarea, FormControl, Caption } from '@contentful/f36-components';
 import { AssetProps } from 'contentful-management/dist/typings/entities/asset';
 import { extractContentfulFieldError } from './utils/entries.ts';
 import useLocales from './hooks/useLocales.tsx';
@@ -22,16 +17,8 @@ interface AssetInputFieldTextComponentProps {
   showLocaleLabel?: boolean;
 }
 
-const AssetInputFieldTextComponent = ({
-  asset,
-  field,
-  locale,
-  as = 'TextInput',
-  rows = 1,
-  showLocaleLabel = false,
-}: AssetInputFieldTextComponentProps) => {
-  const fieldValueProp =
-    asset.fields[field]?.[locale] ?? asset.fields.file?.[locale]?.[field] ?? '';
+const AssetInputFieldTextComponent = ({ asset, field, locale, as = 'TextInput', rows = 1, showLocaleLabel = false }: AssetInputFieldTextComponentProps) => {
+  const fieldValueProp = asset.fields[field]?.[locale] ?? asset.fields.file?.[locale]?.[field] ?? '';
   const assetId = asset.sys.id;
   const { updateAssetEntry } = useAssetEntries();
   const [newFieldValue, setNewFieldValue] = useState(fieldValueProp);
@@ -103,15 +90,8 @@ const AssetInputFieldTextComponent = ({
   return (
     <>
       {showLocaleLabel && <Caption>{localeNames[locale]}</Caption>}
-      <InputComponent
-        key={`${assetId}-${locale}`}
-        value={newFieldValue}
-        onChange={inputChangeHandler}
-        rows={rows}
-      />
-      {error && (
-        <FormControl.ValidationMessage>{error}</FormControl.ValidationMessage>
-      )}
+      <InputComponent key={`${assetId}-${locale}`} value={newFieldValue} onChange={inputChangeHandler} rows={rows} />
+      {error && <FormControl.ValidationMessage>{error}</FormControl.ValidationMessage>}
     </>
   );
 };
@@ -120,24 +100,13 @@ type AssetFieldTextProps = Omit<AssetInputFieldTextComponentProps, 'locale'> & {
   locales?: string[];
 };
 
-export const AssetInputFieldText = ({
-  asset,
-  field,
-  locales: localesProp,
-  ...rest
-}: AssetFieldTextProps) => {
+export const AssetInputFieldText = ({ asset, field, locales: localesProp, ...rest }: AssetFieldTextProps) => {
   const sdk = useSDK<PageAppSDK>();
   const locales = localesProp ?? [sdk.locales.default];
   return locales.map((locale) => {
     return (
-      <FormControl key={`${asset.sys.id}-${locale}`} marginBottom='none'>
-        <AssetInputFieldTextComponent
-          field={field}
-          asset={asset}
-          {...rest}
-          locale={locale}
-          showLocaleLabel={locales.length > 1}
-        />
+      <FormControl key={`${asset.sys.id}-${locale}`} marginBottom="none">
+        <AssetInputFieldTextComponent field={field} asset={asset} {...rest} locale={locale} showLocaleLabel={locales.length > 1} />
       </FormControl>
     );
   });

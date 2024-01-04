@@ -1,21 +1,15 @@
-import { Checkbox } from "@contentful/f36-components";
-import useEntriesSelection from "./hooks/useEntriesSelection";
-import useAssetEntries from "./hooks/useAssetEntries";
-
+import { Checkbox } from '@contentful/f36-components';
+import useEntriesSelection from './hooks/useEntriesSelection';
+import useAssetEntries from './hooks/useAssetEntries';
 
 const SelectAllCheckbox = () => {
   const { assetEntries } = useAssetEntries();
-  const { selectedEntries, setSelectedEntries } =
-  useEntriesSelection();
+  const { selectedEntries, setSelectedEntries } = useEntriesSelection();
   const selectedAll = selectedEntries.length === assetEntries.length;
   return (
     <Checkbox
       isChecked={selectedAll}
-      onChange={() =>
-        !selectedAll
-          ? setSelectedEntries(assetEntries.map((asset) => asset.sys.id))
-          : setSelectedEntries([])
-      }
+      onChange={() => (!selectedAll ? setSelectedEntries(assetEntries.map((asset) => asset.sys.id)) : setSelectedEntries([]))}
     />
   );
 };

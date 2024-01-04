@@ -1,13 +1,5 @@
 import { useMemo, useState } from 'react';
-import {
-  Table,
-  Box,
-  ButtonGroup,
-  Button,
-  Text,
-  Spinner,
-  Flex,
-} from '@contentful/f36-components';
+import { Table, Box, ButtonGroup, Button, Text, Spinner, Flex } from '@contentful/f36-components';
 import useEntriesSelection from './hooks/useEntriesSelection';
 import useColumns from './hooks/useColumns';
 import useAssetEntries from './hooks/useAssetEntries';
@@ -21,56 +13,40 @@ const SelectionControlsTableRow = () => {
   const [performingAction, setPerformingAction] = useState(null);
   const { selectedEntries, setSelectedEntries } = useEntriesSelection();
   const { visibleColumns } = useColumns();
-  const { assetEntries, setAssetEntries, updateAssetEntries } =
-    useAssetEntries();
+  const { assetEntries, setAssetEntries, updateAssetEntries } = useAssetEntries();
   const selectedAssets = useMemo(
-    () =>
-      selectedEntries?.map((id) =>
-        assetEntries.find((assetEntry) => assetEntry.sys.id === id)
-      ) || [],
-    [assetEntries, selectedEntries]
+    () => selectedEntries?.map((id) => assetEntries.find((assetEntry) => assetEntry.sys.id === id)) || [],
+    [assetEntries, selectedEntries],
   );
 
   const deletableAssets = useMemo(() => {
     return selectedAssets.filter(
-      (assetEntry) =>
-        getEntryStatus(assetEntry.sys) === EntryStatus.ARCHIVED ||
-        getEntryStatus(assetEntry.sys) === EntryStatus.DRAFT
+      (assetEntry) => getEntryStatus(assetEntry.sys) === EntryStatus.ARCHIVED || getEntryStatus(assetEntry.sys) === EntryStatus.DRAFT,
     );
   }, [selectedAssets]);
 
   const unpublishableAssets = useMemo(() => {
     return selectedAssets.filter(
-      (assetEntry) =>
-        getEntryStatus(assetEntry.sys) === EntryStatus.PUBLISHED ||
-        getEntryStatus(assetEntry.sys) === EntryStatus.CHANGED
+      (assetEntry) => getEntryStatus(assetEntry.sys) === EntryStatus.PUBLISHED || getEntryStatus(assetEntry.sys) === EntryStatus.CHANGED,
     );
   }, [selectedAssets]);
 
   const republishableAssets = useMemo(() => {
     return selectedAssets.filter(
-      (assetEntry) =>
-        getEntryStatus(assetEntry.sys) === EntryStatus.CHANGED ||
-        getEntryStatus(assetEntry.sys) === EntryStatus.DRAFT
+      (assetEntry) => getEntryStatus(assetEntry.sys) === EntryStatus.CHANGED || getEntryStatus(assetEntry.sys) === EntryStatus.DRAFT,
     );
   }, [selectedAssets]);
 
   const publishableAssets = useMemo(() => {
-    return selectedAssets.filter(
-      (assetEntry) => getEntryStatus(assetEntry.sys) === EntryStatus.DRAFT
-    );
+    return selectedAssets.filter((assetEntry) => getEntryStatus(assetEntry.sys) === EntryStatus.DRAFT);
   }, [selectedAssets]);
 
   const archivableAssets = useMemo(() => {
-    return selectedAssets.filter(
-      (assetEntry) => getEntryStatus(assetEntry.sys) === EntryStatus.DRAFT
-    );
+    return selectedAssets.filter((assetEntry) => getEntryStatus(assetEntry.sys) === EntryStatus.DRAFT);
   }, [selectedAssets]);
 
   const unarchivableAssets = useMemo(() => {
-    return selectedAssets.filter(
-      (assetEntry) => getEntryStatus(assetEntry.sys) === EntryStatus.ARCHIVED
-    );
+    return selectedAssets.filter((assetEntry) => getEntryStatus(assetEntry.sys) === EntryStatus.ARCHIVED);
   }, [selectedAssets]);
 
   const clearSelection = () => setSelectedEntries([]);
@@ -103,11 +79,7 @@ const SelectionControlsTableRow = () => {
   } as const;
 
   const performSelectionAction =
-    (
-      actionKey: keyof typeof actionMap,
-      collection: AssetProps[],
-      confirmed = false
-    ) =>
+    (actionKey: keyof typeof actionMap, collection: AssetProps[], confirmed = false) =>
     async () => {
       if (!confirmed && actionKey === 'delete') {
         const linksResult = await Promise.all(
@@ -117,26 +89,16 @@ const SelectionControlsTableRow = () => {
                 links_to_asset: assetEntry.sys.id,
               },
             });
-          })
+          }),
         );
-        const links = Array.from(
-          new Set(
-            linksResult.flatMap((result) =>
-              result.items.map((item) => item.sys.id)
-            )
-          )
-        );
+        const links = Array.from(new Set(linksResult.flatMap((result) => result.items.map((item) => item.sys.id))));
 
         const usedInMessage = links.at(0) ? ` It is used in: ${links.join(', ')}` : '';
-  
-        const message = `Once you delete ${
-          collection.at(1) ? 'these assets' : 'this asset'
-        }, it's gone for good and cannot be retrieved.${usedInMessage}`;
+
+        const message = `Once you delete ${collection.at(1) ? 'these assets' : 'this asset'}, it's gone for good and cannot be retrieved.${usedInMessage}`;
 
         const confirmationClicked = await sdk.dialogs.openConfirm({
-          title: `Are you sure you want to permanently delete ${
-            collection.at(1) ? 'these assets' : 'this asset'
-          }?`,
+          title: `Are you sure you want to permanently delete ${collection.at(1) ? 'these assets' : 'this asset'}?`,
           message,
           intent: 'negative',
           confirmLabel: 'Permanently delete',
@@ -148,16 +110,10 @@ const SelectionControlsTableRow = () => {
         return;
       }
       setPerformingAction(actionMap[actionKey].actionLabel);
-      const updatedEntries = await Promise.all(
-        collection.map((assetEntry) =>
-          actionMap[actionKey].cma({ assetId: assetEntry.sys.id }, assetEntry)
-        )
-      );
+      const updatedEntries = await Promise.all(collection.map((assetEntry) => actionMap[actionKey].cma({ assetId: assetEntry.sys.id }, assetEntry)));
       if (actionKey === 'delete') {
         setSelectedEntries([]);
-        setAssetEntries(
-          assetEntries.filter((assetEntry) => !collection.includes(assetEntry))
-        );
+        setAssetEntries(assetEntries.filter((assetEntry) => !collection.includes(assetEntry)));
         setPerformingAction(null);
         return;
       }
@@ -178,82 +134,39 @@ const SelectionControlsTableRow = () => {
           </Box>
           {!performingAction && (
             <ButtonGroup variant="spaced" spacing="spacingM">
-              {deletableAssets.at(0) &&
-                selectedAssets.length === deletableAssets.length && (
-                  <Button
-                    variant="negative"
-                    size="small"
-                    onClick={performSelectionAction('delete', selectedAssets)}
-                  >
-                    Delete
-                  </Button>
-                )}
+              {deletableAssets.at(0) && selectedAssets.length === deletableAssets.length && (
+                <Button variant="negative" size="small" onClick={performSelectionAction('delete', selectedAssets)}>
+                  Delete
+                </Button>
+              )}
 
-              {archivableAssets.at(0) &&
-                selectedAssets.length === archivableAssets.length && (
-                  <Button
-                    variant="secondary"
-                    size="small"
-                    onClick={performSelectionAction('archive', selectedAssets)}
-                  >
-                    Archive
-                  </Button>
-                )}
+              {archivableAssets.at(0) && selectedAssets.length === archivableAssets.length && (
+                <Button variant="secondary" size="small" onClick={performSelectionAction('archive', selectedAssets)}>
+                  Archive
+                </Button>
+              )}
 
-              {unpublishableAssets.at(0) &&
-                selectedAssets.length === unpublishableAssets.length && (
-                  <Button
-                    variant="secondary"
-                    size="small"
-                    onClick={performSelectionAction(
-                      'unpublish',
-                      selectedAssets
-                    )}
-                  >
-                    Unpublish
-                  </Button>
-                )}
-              {republishableAssets.at(0) &&
-                selectedAssets.length === republishableAssets.length &&
-                publishableAssets.length !== republishableAssets.length && (
-                  <Button
-                    variant="positive"
-                    size="small"
-                    onClick={performSelectionAction(
-                      'republish',
-                      selectedAssets
-                    )}
-                  >
-                    Republish
-                  </Button>
-                )}
+              {unpublishableAssets.at(0) && selectedAssets.length === unpublishableAssets.length && (
+                <Button variant="secondary" size="small" onClick={performSelectionAction('unpublish', selectedAssets)}>
+                  Unpublish
+                </Button>
+              )}
+              {republishableAssets.at(0) && selectedAssets.length === republishableAssets.length && publishableAssets.length !== republishableAssets.length && (
+                <Button variant="positive" size="small" onClick={performSelectionAction('republish', selectedAssets)}>
+                  Republish
+                </Button>
+              )}
 
-              {publishableAssets.at(0) &&
-                selectedAssets.length === publishableAssets.length && (
-                  <Button
-                    variant="positive"
-                    size="small"
-                    onClick={performSelectionAction(
-                      'publish',
-                      publishableAssets
-                    )}
-                  >
-                    Publish
-                  </Button>
-                )}
-              {unarchivableAssets.at(0) &&
-                selectedAssets.length === unarchivableAssets.length && (
-                  <Button
-                    variant="secondary"
-                    size="small"
-                    onClick={performSelectionAction(
-                      'unarchive',
-                      unarchivableAssets
-                    )}
-                  >
-                    Unarchive
-                  </Button>
-                )}
+              {publishableAssets.at(0) && selectedAssets.length === publishableAssets.length && (
+                <Button variant="positive" size="small" onClick={performSelectionAction('publish', publishableAssets)}>
+                  Publish
+                </Button>
+              )}
+              {unarchivableAssets.at(0) && selectedAssets.length === unarchivableAssets.length && (
+                <Button variant="secondary" size="small" onClick={performSelectionAction('unarchive', unarchivableAssets)}>
+                  Unarchive
+                </Button>
+              )}
             </ButtonGroup>
           )}
           {performingAction && (

@@ -7,10 +7,7 @@ import Dashboard from '../components/Dashboard';
 const Page = () => {
   return (
     <Workbench>
-      <Workbench.Header
-        title="Adapt Essentials: Asset Fields"
-        actions={<Flex gap="2rem" alignItems="center"></Flex>}
-      />
+      <Workbench.Header title="Adapt Essentials: Asset Fields" actions={<Flex gap="2rem" alignItems="center"></Flex>} />
       <Workbench.Content>
         <Box marginTop="spacingXl" className="page">
           <Provider>
